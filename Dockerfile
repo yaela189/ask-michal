@@ -13,8 +13,27 @@ COPY server/ server/
 COPY client/ client/
 COPY scripts/ scripts/
 
-# Install Python dependencies (fastembed uses ONNX, no PyTorch needed)
-RUN pip install --no-cache-dir ".[server]"
+# Install dependencies in small batches to keep peak memory under 512MB
+# Batch 1: Core web framework
+RUN pip install --no-cache-dir fastapi uvicorn[standard] pydantic pydantic-settings python-multipart
+
+# Batch 2: Database + auth
+RUN pip install --no-cache-dir sqlalchemy python-jose[cryptography] google-auth google-auth-oauthlib
+
+# Batch 3: HTTP + AI client
+RUN pip install --no-cache-dir httpx anthropic
+
+# Batch 4: PDF processing
+RUN pip install --no-cache-dir PyMuPDF
+
+# Batch 5: Vector search (largest packages - install separately)
+RUN pip install --no-cache-dir numpy
+RUN pip install --no-cache-dir faiss-cpu
+RUN pip install --no-cache-dir onnxruntime
+RUN pip install --no-cache-dir fastembed
+
+# Install the project itself (deps already satisfied, just registers the package)
+RUN pip install --no-cache-dir --no-deps -e .
 
 # Create data directory
 RUN mkdir -p /app/data /app/knowledge_base
