@@ -29,7 +29,7 @@ def main(kb_dir: str, clear: bool):
     settings = Settings()
     console.print("[bold]Ask Michal - Knowledge Base Ingestion[/bold]\n")
 
-    console.print("Loading embedding model (first run may download ~470MB)...")
+    console.print("Loading embedding model (first run may download ~90MB)...")
     ingestor = PDFIngestor(settings)
     console.print("[green]Model loaded.[/green]\n")
 

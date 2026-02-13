@@ -13,14 +13,8 @@ COPY server/ server/
 COPY client/ client/
 COPY scripts/ scripts/
 
-# Install CPU-only PyTorch first (avoids ~3.5GB CUDA packages)
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
-
-# Install Python dependencies
+# Install Python dependencies (fastembed uses ONNX, no PyTorch needed)
 RUN pip install --no-cache-dir ".[server]"
-
-# Pre-download the embedding model at build time (caches in image)
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')"
 
 # Create data directory
 RUN mkdir -p /app/data /app/knowledge_base

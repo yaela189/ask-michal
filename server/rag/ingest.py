@@ -7,7 +7,7 @@ import re
 import faiss
 import fitz  # PyMuPDF
 import numpy as np
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 
 from server.config import Settings
 
@@ -15,8 +15,10 @@ from server.config import Settings
 class PDFIngestor:
     def __init__(self, settings: Settings):
         self.settings = settings
-        self.embedding_model = SentenceTransformer(settings.embedding_model)
-        self.dimension = self.embedding_model.get_sentence_embedding_dimension()
+        self.embedding_model = TextEmbedding(settings.embedding_model)
+        # Get dimension from a test embedding
+        test = list(self.embedding_model.embed(["test"]))[0]
+        self.dimension = len(test)
         self._load_or_create_index()
 
     def _load_or_create_index(self):
@@ -88,7 +90,8 @@ class PDFIngestor:
                 if chunk_id in self.metadata["id_map"]:
                     continue
 
-                embedding = self.embedding_model.encode(chunk, normalize_embeddings=True)
+                embedding = list(self.embedding_model.embed([chunk]))[0]
+                embedding = embedding / np.linalg.norm(embedding)  # normalize for cosine sim
                 embedding = np.array([embedding], dtype=np.float32)
 
                 idx = self.index.ntotal

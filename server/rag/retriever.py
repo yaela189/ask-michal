@@ -4,7 +4,7 @@ import os
 
 import faiss
 import numpy as np
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 
 from server.config import Settings
 
@@ -12,7 +12,7 @@ from server.config import Settings
 class KnowledgeRetriever:
     def __init__(self, settings: Settings):
         self.settings = settings
-        self.embedding_model = SentenceTransformer(settings.embedding_model)
+        self.embedding_model = TextEmbedding(settings.embedding_model)
         self._load_index()
 
     def _load_index(self):
@@ -40,9 +40,8 @@ class KnowledgeRetriever:
         if k == 0:
             return []
 
-        query_embedding = self.embedding_model.encode(
-            query, normalize_embeddings=True
-        )
+        query_embedding = list(self.embedding_model.embed([query]))[0]
+        query_embedding = query_embedding / np.linalg.norm(query_embedding)
         query_embedding = np.array([query_embedding], dtype=np.float32)
 
         distances, indices = self.index.search(query_embedding, k)
