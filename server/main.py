@@ -284,6 +284,18 @@ async def chat_page():
         }
         .send-btn:hover { transform: scale(1.02); }
         .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .upload-btn {
+            padding: 12px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .upload-btn:hover { background: #e8f5e9; border-color: #2e7d32; }
         @media (max-width: 600px) {
             .message { max-width: 90%; }
             .header-info span { display: none; }
@@ -307,6 +319,8 @@ async def chat_page():
         <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
     </div>
     <div class="input-area">
+        <input type="file" id="fileInput" accept=".pdf" style="display:none" onchange="uploadPDF()">
+        <button class="upload-btn" onclick="document.getElementById('fileInput').click()" title="העלאת PDF למאגר הידע">&#128206;</button>
         <input type="text" id="input" placeholder="...שאלי את מיכל" autofocus>
         <button class="send-btn" id="sendBtn" onclick="send()">שלח</button>
     </div>
@@ -379,6 +393,33 @@ async def chat_page():
                 sendBtn.disabled = false;
                 input.focus();
             }
+        }
+
+        async function uploadPDF() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            addMessage('מעלה את ' + file.name + '...', 'system');
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch('/api/upload-pdf', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    addMessage('הקובץ ' + file.name + ' הועלה בהצלחה! (' + data.chunks + ' קטעים חדשים)', 'system');
+                } else {
+                    addMessage(data.detail || 'שגיאה בהעלאת הקובץ', 'system');
+                }
+            } catch (err) {
+                addMessage('שגיאת תקשורת בהעלאת הקובץ', 'system');
+            }
+            fileInput.value = '';
         }
 
         function logout() {

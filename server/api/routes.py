@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import hashlib
+import logging
+import os
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
 from sqlalchemy.orm import Session
 
 from server.auth.jwt import get_current_user
@@ -9,6 +11,7 @@ from server.database import get_db
 from server.models import User, QueryLog
 from server.api.schemas import AskRequest, AskResponse, QuotaResponse
 
+logger = logging.getLogger("ask-michal")
 router = APIRouter(prefix="/api", tags=["api"])
 
 MSG_QUOTA_EXHAUSTED = "מכסת השאלות שלך נגמרה. פנה/י למנהל המערכת לטעינה מחדש."
@@ -52,6 +55,44 @@ async def ask_question(
         user.queries_remaining += 1
         db.commit()
         raise HTTPException(status_code=500, detail=MSG_INTERNAL_ERROR)
+
+
+@router.post("/upload-pdf")
+async def upload_pdf(
+    request: Request,
+    file: UploadFile = File(...),
+    user: User = Depends(get_current_user),
+):
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="ניתן להעלות קבצי PDF בלבד")
+
+    kb_dir = "./knowledge_base"
+    os.makedirs(kb_dir, exist_ok=True)
+    path = os.path.join(kb_dir, file.filename)
+
+    content = await file.read()
+    with open(path, "wb") as f:
+        f.write(content)
+
+    # Ingest the new PDF
+    try:
+        from server.rag.ingest import PDFIngestor
+        from server.config import Settings
+
+        ingestor = PDFIngestor(Settings())
+        chunks = ingestor.ingest_pdf(path)
+
+        # Reload the retriever with updated index
+        request.app.state.engine.retriever._load_index()
+
+        logger.info(f"User {user.email} uploaded {file.filename}: {chunks} chunks")
+        return {
+            "message": f"הקובץ {file.filename} הועלה ועובד בהצלחה",
+            "chunks": chunks,
+        }
+    except Exception as e:
+        logger.error(f"Failed to ingest {file.filename}: {e}")
+        raise HTTPException(status_code=500, detail="שגיאה בעיבוד הקובץ")
 
 
 @router.get("/quota", response_model=QuotaResponse)
