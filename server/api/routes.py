@@ -14,7 +14,7 @@ from server.api.schemas import AskRequest, AskResponse, QuotaResponse
 logger = logging.getLogger("ask-michal")
 router = APIRouter(prefix="/api", tags=["api"])
 
-MSG_QUOTA_EXHAUSTED = "מכסת השאלות שלך נגמרה. פנה/י למנהל המערכת לטעינה מחדש."
+MSG_QUOTA_EXHAUSTED = "מכסת השאלות שלך נגמרה. לקבלת שאלות נוספות פנה/י למנהל המערכת: bar@yae.la"
 MSG_INTERNAL_ERROR = "שגיאה פנימית. נסה/י שנית."
 
 

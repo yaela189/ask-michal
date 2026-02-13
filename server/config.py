@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     retrieval_top_k: int = 5
 
     # Quota
-    default_query_quota: int = 50
+    default_query_quota: int = 3
 
     # Database
     database_url: str = "sqlite:///./data/michal.db"
