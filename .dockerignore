@@ -1,0 +1,10 @@
+.env
+.venv/
+data/
+knowledge_base/*.pdf
+__pycache__/
+*.pyc
+.git/
+.pytest_cache/
+tests/
+*.egg-info/

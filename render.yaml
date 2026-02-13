@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: ask-michal
+    runtime: docker
+    plan: starter  # $7/month - 512MB RAM, always on
+    healthCheckPath: /docs
+    envVars:
+      - key: MICHAL_GOOGLE_CLIENT_ID
+        sync: false
+      - key: MICHAL_GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: MICHAL_JWT_SECRET_KEY
+        sync: false
+      - key: MICHAL_ANTHROPIC_API_KEY
+        sync: false
+      - key: MICHAL_GOOGLE_REDIRECT_URI
+        sync: false
+      - key: MICHAL_DATABASE_URL
+        value: sqlite:///./data/michal.db
+      - key: MICHAL_FAISS_INDEX_PATH
+        value: ./data/faiss_index
+    disk:
+      name: michal-data
+      mountPath: /app/data
+      sizeGB: 1

@@ -1,0 +1,49 @@
+[project]
+name = "ask-michal"
+version = "0.1.0"
+description = "Ask Michal - AI HR Assistant for Division 96"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+server = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "sqlalchemy>=2.0.36",
+    "anthropic>=0.42.0",
+    "faiss-cpu>=1.9.0",
+    "sentence-transformers>=3.3.0",
+    "PyMuPDF>=1.25.0",
+    "python-jose[cryptography]>=3.3.0",
+    "google-auth>=2.37.0",
+    "google-auth-oauthlib>=1.2.1",
+    "python-multipart>=0.0.18",
+    "httpx>=0.28.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.7.0",
+    "numpy>=2.0.0",
+]
+client = [
+    "rich>=13.9.0",
+    "httpx>=0.28.0",
+    "click>=8.1.0",
+    "python-bidi>=0.6.7",
+    "keyring>=25.6.0",
+]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.28.0",
+]
+
+[project.scripts]
+ask-michal = "client.main:cli"
+ask-michal-server = "server.main:run"
+ask-michal-ingest = "scripts.ingest_kb:main"
+
+[tool.setuptools.packages.find]
+include = ["server*", "client*", "scripts*"]
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"

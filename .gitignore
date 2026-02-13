@@ -1,0 +1,24 @@
+# Secrets
+.env
+
+# Data (DB, FAISS index - stored on Render disk)
+data/
+
+# Knowledge base PDFs (contain sensitive content)
+knowledge_base/*.pdf
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
