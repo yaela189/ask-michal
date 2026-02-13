@@ -16,7 +16,7 @@ class Settings(BaseSettings):
 
     # Anthropic
     anthropic_api_key: str = ""
-    anthropic_model: str = "claude-sonnet-4-20250514"
+    anthropic_model: str = "claude-opus-4-6"
 
     # RAG
     embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
