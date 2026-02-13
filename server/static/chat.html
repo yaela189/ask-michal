@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Ask Michal - צ'אט</title>
+    <title>תשאל את מיכל - צ'אט</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --green-dark: #1a3a2a;
-            --green-mid: #2e7d32;
-            --green-light: #43a047;
-            --green-pale: #e8f5e9;
-            --bg: #f0f4f1;
+            --olive-dark: #3d3d26;
+            --olive-mid: #5c6b3c;
+            --olive-light: #7a8b52;
+            --olive-pale: #f0f2e8;
+            --bg: #f4f5f0;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -24,9 +24,9 @@
 
         /* === HEADER === */
         .header {
-            background: linear-gradient(135deg, var(--green-dark), #2d5a3f);
+            background: linear-gradient(135deg, #3d3d26, #4a4a2e, #5c6b3c);
             color: white;
-            padding: 10px 16px;
+            padding: 8px 16px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -34,40 +34,9 @@
             z-index: 10;
             flex-shrink: 0;
         }
-
-        /* Mini Michal in header */
-        .mini-michal {
-            width: 42px; height: 42px;
-            background: linear-gradient(135deg, #43a047, #66bb6a);
-            border-radius: 50%;
-            position: relative;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(67,160,71,0.4);
-        }
-        .mini-michal .m-eyes { position: absolute; top: 13px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; }
-        .mini-michal .m-eye {
-            width: 7px; height: 7px;
-            background: white;
-            border-radius: 50%;
-            position: relative;
-        }
-        .mini-michal .m-eye::after {
-            content: '';
-            position: absolute;
-            width: 3.5px; height: 3.5px;
-            background: var(--green-dark);
-            border-radius: 50%;
-            top: 1.75px; left: 1.75px;
-        }
-        .mini-michal .m-mouth {
-            position: absolute;
-            bottom: 12px; left: 50%;
-            transform: translateX(-50%);
-            width: 12px; height: 6px;
-            border-bottom: 2px solid white;
-            border-radius: 0 0 6px 6px;
-        }
-        .header-text h1 { font-size: 16px; font-weight: 600; line-height: 1.2; }
+        /* Mini Michal SVG in header */
+        .mini-michal { width: 38px; height: 44px; flex-shrink: 0; }
+        .header-text h1 { font-size: 15px; font-weight: 600; line-height: 1.2; }
         .header-text small { font-size: 11px; opacity: 0.7; }
         .header-actions { margin-right: auto; display: flex; align-items: center; gap: 8px; }
         .quota-badge {
@@ -75,16 +44,15 @@
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 11px;
-            backdrop-filter: blur(4px);
         }
         .header-btn {
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.2);
             color: white;
-            width: 34px; height: 34px;
+            width: 32px; height: 32px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -94,88 +62,50 @@
 
         /* === MICHAL CHARACTER AREA === */
         .michal-area {
-            background: linear-gradient(180deg, rgba(26,58,42,0.05) 0%, transparent 100%);
-            padding: 16px 0 8px;
+            background: linear-gradient(180deg, rgba(92,107,60,0.06) 0%, transparent 100%);
+            padding: 14px 0 6px;
             text-align: center;
             flex-shrink: 0;
             transition: all 0.4s ease;
         }
-        .michal-area.compact { padding: 8px 0 4px; }
+        .michal-area.compact { padding: 6px 0 2px; }
         .michal-char {
-            width: 90px; height: 90px;
+            width: 100px; height: 120px;
             margin: 0 auto;
-            position: relative;
             transition: all 0.4s ease;
         }
-        .michal-area.compact .michal-char { width: 50px; height: 50px; }
-        .michal-ball {
-            width: 100%; height: 100%;
-            background: linear-gradient(135deg, #43a047, #66bb6a);
-            border-radius: 50%;
-            position: relative;
-            box-shadow: 0 6px 24px rgba(67,160,71,0.35);
+        .michal-area.compact .michal-char { width: 55px; height: 66px; }
+        .michal-char svg { width: 100%; height: 100%; }
+
+        /* Animations */
+        .char-body { animation: breathe 3s ease-in-out infinite; transform-origin: center bottom; }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.015) translateY(-0.5px); }
         }
-        /* Eyes */
-        .char-eyes { position: absolute; top: 32%; left: 50%; transform: translateX(-50%); display: flex; gap: 20%; }
-        .char-eye {
-            width: 14%; height: 14%;
-            background: white;
-            border-radius: 50%;
-            position: relative;
-            animation: charBlink 3.5s ease-in-out infinite;
-        }
-        .char-eye::after {
-            content: '';
-            position: absolute;
-            width: 55%; height: 55%;
-            background: var(--green-dark);
-            border-radius: 50%;
-            top: 22%; left: 22%;
-        }
-        @keyframes charBlink {
-            0%, 42%, 46%, 100% { transform: scaleY(1); }
-            44% { transform: scaleY(0.1); }
-        }
-        .char-blush {
-            position: absolute;
-            width: 16%; height: 9%;
-            background: rgba(255,138,128,0.35);
-            border-radius: 50%;
-            top: 50%;
-        }
-        .char-blush-l { left: 12%; }
-        .char-blush-r { right: 12%; }
-        .char-mouth {
-            position: absolute;
-            bottom: 26%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 22%;
-            height: 11%;
-            border-bottom: 2.5px solid white;
-            border-radius: 0 0 50% 50%;
-            transition: all 0.3s ease;
-        }
-        /* Mood states */
-        .michal-ball.thinking { animation: thinkBounce 0.6s ease-in-out infinite; }
+        .char-body.thinking { animation: thinkBounce 0.6s ease-in-out infinite; }
         @keyframes thinkBounce {
             0%, 100% { transform: translateY(0) rotate(0); }
-            25% { transform: translateY(-4px) rotate(-2deg); }
-            75% { transform: translateY(-4px) rotate(2deg); }
+            25% { transform: translateY(-3px) rotate(-1.5deg); }
+            75% { transform: translateY(-3px) rotate(1.5deg); }
         }
-        .michal-ball.thinking .char-mouth {
-            width: 12%;
-            height: 12%;
-            border: 2.5px solid white;
-            border-radius: 50%;
-            bottom: 24%;
+        .char-body.happy .mouth-smile { d: path("M64 105 Q75 118 86 105"); }
+        .eye-lid { animation: blink 3.5s ease-in-out infinite; transform-origin: center; }
+        @keyframes blink {
+            0%, 42%, 46%, 100% { transform: scaleY(0); }
+            44% { transform: scaleY(1); }
         }
-        .michal-ball.happy .char-mouth { width: 30%; height: 14%; }
-        .michal-ball.happy .char-eye::after { height: 45%; top: 30%; }
+        .pupil { animation: look 5s ease-in-out infinite; }
+        @keyframes look {
+            0%, 40%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(1.5px, -0.5px); }
+            60% { transform: translate(-1.5px, 0.5px); }
+        }
+
         .michal-status {
             font-size: 12px;
-            color: #888;
-            margin-top: 6px;
+            color: #999;
+            margin-top: 4px;
             min-height: 18px;
             transition: all 0.3s;
         }
@@ -207,10 +137,10 @@
         }
         .msg.user {
             align-self: flex-start;
-            background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+            background: linear-gradient(135deg, var(--olive-mid), var(--olive-light));
             color: white;
             border-bottom-right-radius: 4px;
-            box-shadow: 0 2px 8px rgba(46,125,50,0.2);
+            box-shadow: 0 2px 8px rgba(92,107,60,0.2);
         }
         .msg.bot {
             align-self: flex-end;
@@ -238,14 +168,14 @@
             padding: 8px 18px;
         }
         .msg.system.success {
-            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-            color: #2e7d32;
+            background: linear-gradient(135deg, #f0f2e8, #e0e4d4);
+            color: var(--olive-mid);
         }
 
         /* === INPUT AREA === */
         .input-area {
-            padding: 12px 16px;
-            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            padding: 10px 14px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
             background: white;
             border-top: 1px solid #e8e8e8;
             display: flex;
@@ -255,12 +185,11 @@
         }
         .input-wrap {
             flex: 1;
-            position: relative;
         }
         .input-wrap textarea {
             width: 100%;
             padding: 10px 14px;
-            border: 2px solid #e8e8e8;
+            border: 2px solid #e4e4dc;
             border-radius: 20px;
             font-size: 15px;
             font-family: inherit;
@@ -272,7 +201,7 @@
             line-height: 1.4;
             transition: border-color 0.2s;
         }
-        .input-wrap textarea:focus { border-color: var(--green-light); }
+        .input-wrap textarea:focus { border-color: var(--olive-light); }
         .action-btn {
             width: 42px; height: 42px;
             border-radius: 50%;
@@ -286,40 +215,55 @@
             flex-shrink: 0;
         }
         .send-btn {
-            background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+            background: linear-gradient(135deg, var(--olive-mid), var(--olive-light));
             color: white;
-            box-shadow: 0 3px 12px rgba(46,125,50,0.3);
+            box-shadow: 0 3px 12px rgba(92,107,60,0.3);
         }
-        .send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(46,125,50,0.4); }
+        .send-btn:hover { transform: scale(1.05); }
         .send-btn:active { transform: scale(0.95); }
         .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
         .upload-btn {
-            background: var(--green-pale);
-            color: var(--green-mid);
+            background: var(--olive-pale);
+            color: var(--olive-mid);
         }
-        .upload-btn:hover { background: #c8e6c9; }
+        .upload-btn:hover { background: #e4e8d8; }
 
-        /* Scrollbar */
         .messages::-webkit-scrollbar { width: 4px; }
         .messages::-webkit-scrollbar-track { background: transparent; }
         .messages::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
         @media (max-width: 600px) {
-            .msg { max-width: 88%; font-size: 14px; }
-            .header { padding: 8px 12px; }
+            .msg { max-width: 88%; }
             .quota-badge { display: none; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
-        <div class="mini-michal">
-            <div class="m-eyes"><div class="m-eye"></div><div class="m-eye"></div></div>
-            <div class="m-mouth"></div>
-        </div>
+        <svg class="mini-michal" viewBox="0 0 150 180" fill="none">
+            <g>
+                <ellipse cx="75" cy="82" rx="52" ry="50" fill="#5a3825"/>
+                <rect x="63" y="125" width="24" height="14" rx="4" fill="#fdd0a8"/>
+                <path d="M40 138 Q42 132 63 132 L87 132 Q108 132 110 138 L115 170 Q115 178 105 178 L45 178 Q35 178 35 170 Z" fill="#5c6b3c"/>
+                <path d="M63 132 L75 145 L87 132" fill="#4a5a30"/>
+                <ellipse cx="75" cy="88" rx="42" ry="40" fill="#fdd0a8"/>
+                <ellipse cx="60" cy="85" rx="8" ry="9" fill="white"/>
+                <ellipse cx="60" cy="85" rx="5.5" ry="6" fill="#3d2b1f"/>
+                <circle cx="61" cy="84" r="2.5" fill="black"/>
+                <circle cx="63" cy="82" r="1.5" fill="white"/>
+                <ellipse cx="90" cy="85" rx="8" ry="9" fill="white"/>
+                <ellipse cx="90" cy="85" rx="5.5" ry="6" fill="#3d2b1f"/>
+                <circle cx="91" cy="84" r="2.5" fill="black"/>
+                <circle cx="93" cy="82" r="1.5" fill="white"/>
+                <path d="M64 105 Q75 115 86 105" stroke="#c96b5a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M33 72 Q35 50 55 42 Q68 38 75 40 Q82 38 95 42 Q115 50 117 72 Q110 62 95 58 Q82 55 75 57 Q68 55 55 58 Q40 62 33 72Z" fill="#5a3825"/>
+                <ellipse cx="75" cy="52" rx="45" ry="22" fill="#5c6b3c"/>
+                <path d="M30 52 Q30 38 50 33 Q68 28 80 30 Q100 33 115 42 Q120 48 120 52" fill="#5c6b3c"/>
+                <circle cx="48" cy="46" r="5" fill="#8b9a5c" stroke="#6b7a4c" stroke-width="1"/>
+            </g>
+        </svg>
         <div class="header-text">
-            <h1>Ask Michal</h1>
+            <h1>תשאל את מיכל</h1>
             <small id="userName"></small>
         </div>
         <div class="header-actions">
@@ -328,28 +272,59 @@
         </div>
     </div>
 
-    <!-- Michal Character -->
     <div class="michal-area" id="michalArea">
         <div class="michal-char">
-            <div class="michal-ball" id="michalBall">
-                <div class="char-eyes" style="position:absolute;top:32%;left:50%;transform:translateX(-50%);display:flex;gap:18px;">
-                    <div class="char-eye" style="width:13px;height:13px;"></div>
-                    <div class="char-eye" style="width:13px;height:13px;"></div>
-                </div>
-                <div class="char-blush char-blush-l"></div>
-                <div class="char-blush char-blush-r"></div>
-                <div class="char-mouth"></div>
-            </div>
+            <svg viewBox="0 0 150 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g class="char-body" id="michalBody">
+                    <ellipse cx="75" cy="82" rx="52" ry="50" fill="#5a3825"/>
+                    <path d="M30 95 Q25 130 45 155" stroke="#5a3825" stroke-width="12" stroke-linecap="round" fill="none"/>
+                    <path d="M120 95 Q125 130 105 155" stroke="#5a3825" stroke-width="12" stroke-linecap="round" fill="none"/>
+                    <rect x="63" y="125" width="24" height="14" rx="4" fill="#fdd0a8"/>
+                    <path d="M40 138 Q42 132 63 132 L87 132 Q108 132 110 138 L115 170 Q115 178 105 178 L45 178 Q35 178 35 170 Z" fill="#5c6b3c"/>
+                    <path d="M63 132 L75 145 L87 132" fill="#4a5a30" stroke="#4a5a30" stroke-width="1"/>
+                    <rect x="52" y="152" width="16" height="12" rx="2" fill="none" stroke="#4a5a30" stroke-width="1.5"/>
+                    <rect x="82" y="152" width="16" height="12" rx="2" fill="none" stroke="#4a5a30" stroke-width="1.5"/>
+                    <circle cx="75" cy="150" r="2" fill="#4a5a30"/>
+                    <circle cx="75" cy="162" r="2" fill="#4a5a30"/>
+                    <ellipse cx="75" cy="88" rx="42" ry="40" fill="#fdd0a8"/>
+                    <ellipse cx="50" cy="98" rx="8" ry="4" fill="rgba(255,150,130,0.3)"/>
+                    <ellipse cx="100" cy="98" rx="8" ry="4" fill="rgba(255,150,130,0.3)"/>
+                    <g>
+                        <ellipse cx="60" cy="85" rx="8" ry="9" fill="white"/>
+                        <ellipse cx="60" cy="85" rx="5.5" ry="6" fill="#3d2b1f"/>
+                        <circle class="pupil" cx="61" cy="84" r="2.5" fill="black"/>
+                        <circle cx="63" cy="82" r="1.5" fill="white"/>
+                        <ellipse class="eye-lid" cx="60" cy="85" rx="9" ry="10" fill="#fdd0a8"/>
+                    </g>
+                    <g>
+                        <ellipse cx="90" cy="85" rx="8" ry="9" fill="white"/>
+                        <ellipse cx="90" cy="85" rx="5.5" ry="6" fill="#3d2b1f"/>
+                        <circle class="pupil" cx="91" cy="84" r="2.5" fill="black"/>
+                        <circle cx="93" cy="82" r="1.5" fill="white"/>
+                        <ellipse class="eye-lid" cx="90" cy="85" rx="9" ry="10" fill="#fdd0a8"/>
+                    </g>
+                    <path d="M52 74 Q60 70 68 73" stroke="#4a3020" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    <path d="M82 73 Q90 70 98 74" stroke="#4a3020" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    <path d="M73 94 Q75 97 77 94" stroke="#e8a878" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                    <path class="mouth-smile" id="mouth" d="M64 105 Q75 115 86 105" stroke="#c96b5a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <path d="M33 72 Q35 50 55 42 Q68 38 75 40 Q82 38 95 42 Q115 50 117 72 Q110 62 95 58 Q82 55 75 57 Q68 55 55 58 Q40 62 33 72Z" fill="#5a3825"/>
+                    <ellipse cx="75" cy="52" rx="45" ry="22" fill="#5c6b3c"/>
+                    <path d="M30 52 Q30 38 50 33 Q68 28 80 30 Q100 33 115 42 Q120 48 120 52" fill="#5c6b3c"/>
+                    <path d="M105 42 Q112 38 118 44" stroke="#4a5a30" stroke-width="1.5" fill="none"/>
+                    <circle cx="48" cy="46" r="5" fill="#8b9a5c" stroke="#6b7a4c" stroke-width="1"/>
+                    <path d="M46 46 L48 43 L50 46 L48 49Z" fill="#6b7a4c"/>
+                    <rect x="42" y="138" width="8" height="3" rx="1" fill="#8b9a5c"/>
+                    <rect x="100" y="138" width="8" height="3" rx="1" fill="#8b9a5c"/>
+                </g>
+            </svg>
         </div>
         <div class="michal-status" id="michalStatus">מוכנה לעזור!</div>
     </div>
 
-    <!-- Messages -->
     <div class="messages" id="messages">
-        <div class="msg bot">שלום! אני מיכל, קצינת שלישות וירטואלית. איך אוכל לעזור לך היום?</div>
+        <div class="msg bot">שלום! אני מיכל, משקית שלישות וירטואלית. איך אוכל לעזור לך היום?</div>
     </div>
 
-    <!-- Input -->
     <div class="input-area">
         <input type="file" id="fileInput" accept=".pdf" style="display:none" onchange="uploadPDF()">
         <button class="action-btn upload-btn" onclick="document.getElementById('fileInput').click()" title="העלאת PDF">&#128206;</button>
@@ -366,7 +341,6 @@
 
         document.getElementById('userName').textContent = userName || '';
 
-        // Load quota
         fetch('/api/quota', { headers: { 'Authorization': 'Bearer ' + token } })
             .then(r => r.json())
             .then(d => { document.getElementById('quota').textContent = d.queries_remaining + ' שאלות'; })
@@ -375,17 +349,16 @@
         const input = document.getElementById('input');
         const messagesDiv = document.getElementById('messages');
         const sendBtn = document.getElementById('sendBtn');
-        const michalBall = document.getElementById('michalBall');
+        const michalBody = document.getElementById('michalBody');
         const michalStatus = document.getElementById('michalStatus');
         const michalArea = document.getElementById('michalArea');
+        const mouth = document.getElementById('mouth');
 
-        // Auto-resize textarea
         input.addEventListener('input', () => {
             input.style.height = 'auto';
             input.style.height = Math.min(input.scrollHeight, 100) + 'px';
         });
 
-        // Send on Enter (Shift+Enter for newline)
         input.addEventListener('keydown', e => {
             if (e.key === 'Enter' && !e.shiftKey && !sendBtn.disabled) {
                 e.preventDefault();
@@ -393,12 +366,18 @@
             }
         });
 
-        // Compact Michal after first message
         let messageCount = 0;
 
         function setMood(mood, status) {
-            michalBall.className = 'michal-ball ' + mood;
+            michalBody.className = 'char-body ' + mood;
             michalStatus.textContent = status;
+            if (mood === 'thinking') {
+                mouth.setAttribute('d', 'M68 105 Q75 108 82 105');
+            } else if (mood === 'happy') {
+                mouth.setAttribute('d', 'M62 103 Q75 118 88 103');
+            } else {
+                mouth.setAttribute('d', 'M64 105 Q75 115 86 105');
+            }
         }
 
         function addMessage(text, type, sources) {
@@ -413,7 +392,6 @@
             }
             messagesDiv.appendChild(div);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
             messageCount++;
             if (messageCount >= 2) michalArea.classList.add('compact');
         }
@@ -421,7 +399,6 @@
         async function send() {
             const q = input.value.trim();
             if (!q) return;
-
             addMessage(q, 'user');
             input.value = '';
             input.style.height = 'auto';
@@ -434,14 +411,12 @@
                     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
                     body: JSON.stringify({ question: q })
                 });
-
                 if (res.status === 401) { window.location.href = '/'; return; }
                 if (res.status === 429) {
                     setMood('', 'מכסת השאלות נגמרה');
                     addMessage('מכסת השאלות שלך נגמרה. לקבלת שאלות נוספות פנה/י למנהל המערכת: bar@yae.la', 'system');
                     return;
                 }
-
                 const data = await res.json();
                 if (res.ok) {
                     setMood('happy', 'שמחה לעזור!');
@@ -465,13 +440,10 @@
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
             if (!file) return;
-
             setMood('thinking', '...קוראת את המסמך');
             addMessage('מעלה את ' + file.name + '...', 'system');
-
             const formData = new FormData();
             formData.append('file', file);
-
             try {
                 const res = await fetch('/api/upload-pdf', {
                     method: 'POST',
@@ -500,7 +472,6 @@
             window.location.href = '/';
         }
 
-        // Focus input on load
         setTimeout(() => input.focus(), 300);
     </script>
 </body>

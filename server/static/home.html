@@ -3,24 +3,23 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ask Michal - עוזרת שלישות חכמה</title>
+    <title>תשאל את מיכל - משקית שלישות חכמה</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(160deg, #0a1628 0%, #1a3a2a 40%, #2d5a3f 70%, #1a3a2a 100%);
+            background: linear-gradient(160deg, #2c2c1a 0%, #4a4a2e 30%, #5c6b3c 60%, #4a4a2e 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
         }
-        /* Floating particles */
         .particles { position: fixed; inset: 0; pointer-events: none; }
         .particle {
             position: absolute;
             width: 4px; height: 4px;
-            background: rgba(102, 187, 106, 0.3);
+            background: rgba(180, 190, 140, 0.3);
             border-radius: 50%;
             animation: float linear infinite;
         }
@@ -46,91 +45,52 @@
             from { opacity: 0; transform: translateY(40px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* Michal Tamagotchi */
-        .michal-container {
-            width: 120px; height: 120px;
-            margin: 0 auto 28px;
+
+        /* === MICHAL CHARACTER === */
+        .michal-wrap {
+            width: 150px; height: 180px;
+            margin: 0 auto 20px;
             position: relative;
         }
-        .michal-body {
-            width: 120px; height: 120px;
-            background: linear-gradient(135deg, #43a047, #66bb6a);
-            border-radius: 50%;
-            position: relative;
-            box-shadow: 0 8px 30px rgba(67, 160, 71, 0.4);
-            animation: breathe 3s ease-in-out infinite;
-        }
+        .michal-svg { width: 100%; height: 100%; }
+
+        /* Breathing animation */
+        .michal-body-group { animation: breathe 3s ease-in-out infinite; transform-origin: center bottom; }
         @keyframes breathe {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.04); }
+            50% { transform: scale(1.02) translateY(-1px); }
         }
-        /* Face */
-        .eyes { position: absolute; top: 38px; left: 50%; transform: translateX(-50%); display: flex; gap: 24px; }
-        .eye {
-            width: 16px; height: 16px;
-            background: white;
-            border-radius: 50%;
-            position: relative;
+        /* Blink */
+        .eye-lid { animation: blink 3.5s ease-in-out infinite; transform-origin: center; }
+        @keyframes blink {
+            0%, 42%, 46%, 100% { transform: scaleY(0); }
+            44% { transform: scaleY(1); }
         }
-        .eye::after {
-            content: '';
-            position: absolute;
-            width: 8px; height: 8px;
-            background: #1a3a2a;
-            border-radius: 50%;
-            top: 4px; left: 4px;
-            animation: look 4s ease-in-out infinite;
-        }
+        /* Eye look */
+        .pupil { animation: look 5s ease-in-out infinite; }
         @keyframes look {
             0%, 40%, 100% { transform: translate(0, 0); }
-            20% { transform: translate(2px, -1px); }
-            60% { transform: translate(-2px, 1px); }
+            20% { transform: translate(1.5px, -0.5px); }
+            60% { transform: translate(-1.5px, 0.5px); }
         }
-        .eye-blink { animation: blink 3.5s ease-in-out infinite; }
-        @keyframes blink {
-            0%, 42%, 46%, 100% { transform: scaleY(1); }
-            44% { transform: scaleY(0.1); }
-        }
-        .mouth {
-            position: absolute;
-            bottom: 32px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 28px; height: 14px;
-            border-bottom: 3px solid white;
-            border-radius: 0 0 14px 14px;
-            animation: smile 3s ease-in-out infinite;
-        }
-        @keyframes smile {
-            0%, 100% { width: 28px; }
-            50% { width: 32px; }
-        }
-        /* Blush */
-        .blush {
-            position: absolute;
-            width: 18px; height: 10px;
-            background: rgba(255, 138, 128, 0.4);
-            border-radius: 50%;
-            top: 58px;
-        }
-        .blush-l { left: 16px; }
-        .blush-r { right: 16px; }
-        /* Stars around */
+        /* Stars */
         .star {
             position: absolute;
             font-size: 14px;
             animation: twinkle 2s ease-in-out infinite;
+            color: #8b9a5c;
         }
-        .star:nth-child(1) { top: -8px; right: -5px; animation-delay: 0s; }
-        .star:nth-child(2) { top: 10px; left: -12px; animation-delay: 0.7s; font-size: 10px; }
-        .star:nth-child(3) { bottom: 5px; right: -10px; animation-delay: 1.4s; font-size: 12px; }
+        .star:nth-child(1) { top: 5px; right: 0px; animation-delay: 0s; }
+        .star:nth-child(2) { top: 30px; left: -5px; animation-delay: 0.7s; font-size: 10px; }
+        .star:nth-child(3) { bottom: 25px; right: -5px; animation-delay: 1.4s; font-size: 12px; }
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; transform: scale(0.8); }
             50% { opacity: 1; transform: scale(1.2); }
         }
+
         h1 {
-            font-size: 26px;
-            color: #1a3a2a;
+            font-size: 28px;
+            color: #3d3d26;
             margin-bottom: 6px;
             font-weight: 700;
         }
@@ -141,7 +101,7 @@
             font-weight: 300;
         }
         .desc {
-            background: linear-gradient(135deg, #f5f9f6, #e8f5e9);
+            background: linear-gradient(135deg, #f8f9f3, #f0f2e8);
             border-radius: 14px;
             padding: 20px;
             margin-bottom: 28px;
@@ -149,13 +109,13 @@
             line-height: 1.8;
             color: #444;
             text-align: right;
-            border: 1px solid rgba(46, 125, 50, 0.1);
+            border: 1px solid rgba(100, 120, 60, 0.15);
         }
         .login-btn {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background: linear-gradient(135deg, #2e7d32, #43a047);
+            background: linear-gradient(135deg, #5c6b3c, #7a8b52);
             color: white;
             text-decoration: none;
             padding: 16px 40px;
@@ -163,11 +123,11 @@
             font-size: 17px;
             font-weight: 600;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+            box-shadow: 0 4px 15px rgba(92, 107, 60, 0.3);
         }
         .login-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(46, 125, 50, 0.5);
+            box-shadow: 0 8px 30px rgba(92, 107, 60, 0.5);
         }
         .login-btn:active { transform: translateY(-1px); }
         .footer {
@@ -177,38 +137,103 @@
         }
         @media (max-width: 480px) {
             .container { padding: 40px 28px 32px; }
-            h1 { font-size: 22px; }
+            h1 { font-size: 24px; }
         }
     </style>
 </head>
 <body>
     <div class="particles" id="particles"></div>
     <div class="container">
-        <div class="michal-container">
+        <div class="michal-wrap">
             <span class="star">&#10024;</span>
             <span class="star">&#10024;</span>
             <span class="star">&#10024;</span>
-            <div class="michal-body">
-                <div class="eyes">
-                    <div class="eye eye-blink"></div>
-                    <div class="eye eye-blink"></div>
-                </div>
-                <div class="blush blush-l"></div>
-                <div class="blush blush-r"></div>
-                <div class="mouth"></div>
-            </div>
+            <svg class="michal-svg" viewBox="0 0 150 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g class="michal-body-group">
+                    <!-- Hair behind -->
+                    <ellipse cx="75" cy="82" rx="52" ry="50" fill="#5a3825"/>
+                    <path d="M30 95 Q25 130 45 155" stroke="#5a3825" stroke-width="12" stroke-linecap="round" fill="none"/>
+                    <path d="M120 95 Q125 130 105 155" stroke="#5a3825" stroke-width="12" stroke-linecap="round" fill="none"/>
+
+                    <!-- Neck -->
+                    <rect x="63" y="125" width="24" height="14" rx="4" fill="#fdd0a8"/>
+
+                    <!-- Uniform body (olive/khaki) -->
+                    <path d="M40 138 Q42 132 63 132 L87 132 Q108 132 110 138 L115 170 Q115 178 105 178 L45 178 Q35 178 35 170 Z" fill="#5c6b3c"/>
+                    <!-- Collar -->
+                    <path d="M63 132 L75 145 L87 132" fill="#4a5a30" stroke="#4a5a30" stroke-width="1"/>
+                    <!-- Pocket -->
+                    <rect x="52" y="152" width="16" height="12" rx="2" fill="none" stroke="#4a5a30" stroke-width="1.5"/>
+                    <rect x="82" y="152" width="16" height="12" rx="2" fill="none" stroke="#4a5a30" stroke-width="1.5"/>
+                    <!-- Buttons -->
+                    <circle cx="75" cy="150" r="2" fill="#4a5a30"/>
+                    <circle cx="75" cy="162" r="2" fill="#4a5a30"/>
+
+                    <!-- Face -->
+                    <ellipse cx="75" cy="88" rx="42" ry="40" fill="#fdd0a8"/>
+
+                    <!-- Blush -->
+                    <ellipse cx="50" cy="98" rx="8" ry="4" fill="rgba(255,150,130,0.3)"/>
+                    <ellipse cx="100" cy="98" rx="8" ry="4" fill="rgba(255,150,130,0.3)"/>
+
+                    <!-- Eyes -->
+                    <g>
+                        <!-- Left eye -->
+                        <ellipse cx="60" cy="85" rx="8" ry="9" fill="white"/>
+                        <ellipse cx="60" cy="85" rx="5.5" ry="6" fill="#3d2b1f"/>
+                        <circle class="pupil" cx="61" cy="84" r="2.5" fill="black"/>
+                        <circle cx="63" cy="82" r="1.5" fill="white"/>
+                        <!-- Lid for blink -->
+                        <ellipse class="eye-lid" cx="60" cy="85" rx="9" ry="10" fill="#fdd0a8"/>
+                    </g>
+                    <g>
+                        <!-- Right eye -->
+                        <ellipse cx="90" cy="85" rx="8" ry="9" fill="white"/>
+                        <ellipse cx="90" cy="85" rx="5.5" ry="6" fill="#3d2b1f"/>
+                        <circle class="pupil" cx="91" cy="84" r="2.5" fill="black"/>
+                        <circle cx="93" cy="82" r="1.5" fill="white"/>
+                        <!-- Lid for blink -->
+                        <ellipse class="eye-lid" cx="90" cy="85" rx="9" ry="10" fill="#fdd0a8"/>
+                    </g>
+
+                    <!-- Eyebrows -->
+                    <path d="M52 74 Q60 70 68 73" stroke="#4a3020" stroke-width="2" stroke-linecap="round" fill="none"/>
+                    <path d="M82 73 Q90 70 98 74" stroke="#4a3020" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+                    <!-- Nose -->
+                    <path d="M73 94 Q75 97 77 94" stroke="#e8a878" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+                    <!-- Mouth (smile) -->
+                    <path d="M64 105 Q75 115 86 105" stroke="#c96b5a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+                    <!-- Hair front / bangs -->
+                    <path d="M33 72 Q35 50 55 42 Q68 38 75 40 Q82 38 95 42 Q115 50 117 72 Q110 62 95 58 Q82 55 75 57 Q68 55 55 58 Q40 62 33 72Z" fill="#5a3825"/>
+
+                    <!-- Beret (olive IDF style) -->
+                    <ellipse cx="75" cy="52" rx="45" ry="22" fill="#5c6b3c"/>
+                    <path d="M30 52 Q30 38 50 33 Q68 28 80 30 Q100 33 115 42 Q120 48 120 52" fill="#5c6b3c"/>
+                    <!-- Beret fold -->
+                    <path d="M105 42 Q112 38 118 44" stroke="#4a5a30" stroke-width="1.5" fill="none"/>
+                    <!-- Beret badge -->
+                    <circle cx="48" cy="46" r="5" fill="#8b9a5c" stroke="#6b7a4c" stroke-width="1"/>
+                    <path d="M46 46 L48 43 L50 46 L48 49Z" fill="#6b7a4c"/>
+
+                    <!-- Rank insignia on shoulder -->
+                    <rect x="42" y="138" width="8" height="3" rx="1" fill="#8b9a5c"/>
+                    <rect x="100" y="138" width="8" height="3" rx="1" fill="#8b9a5c"/>
+                </g>
+            </svg>
         </div>
-        <h1>Ask Michal</h1>
-        <p class="subtitle">עוזרת שלישות חכמה מבוססת בינה מלאכותית</p>
+        <h1>תשאל את מיכל</h1>
+        <p class="subtitle">משקית שלישות חכמה מבוססת בינה מלאכותית</p>
         <div class="desc">
-            שלום! אני מיכל, קצינת שלישות וירטואלית.
+            שלום! אני מיכל, משקית שלישות וירטואלית.
             אני כאן כדי לעזור לך עם שאלות בנושאי כוח אדם, זכויות, חובות ונהלי שלישות.
         </div>
         <a href="/auth/login" class="login-btn">&#127760; התחברות עם Google</a>
-        <p class="footer">Ask Michal v0.1.0</p>
+        <p class="footer">תשאל את מיכל v0.1.0</p>
     </div>
     <script>
-        // Create floating particles
         const p = document.getElementById('particles');
         for (let i = 0; i < 20; i++) {
             const d = document.createElement('div');
@@ -219,7 +244,6 @@
             d.style.animationDelay = (Math.random() * 10) + 's';
             p.appendChild(d);
         }
-        // Auto-redirect if already logged in
         if (localStorage.getItem('michal_token')) window.location.href = '/chat';
     </script>
 </body>
