@@ -126,13 +126,15 @@ async def callback(request: Request, db: Session = Depends(get_db)):
 <html dir="rtl" lang="he">
 <head><meta charset="utf-8"><title>Ask Michal - Login</title></head>
 <body style="font-family: sans-serif; text-align: center; padding: 50px; background: #f5f5f5;">
-    <div style="max-width: 400px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div style="max-width: 500px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <h1 style="color: #2e7d32;">&#x2705; ההתחברות הצליחה!</h1>
         <p>שלום <strong>{name}</strong></p>
         <p>ניתן לחזור לטרמינל.</p>
-        <p style="font-size: 11px; color: #999; word-break: break-all; margin-top: 30px;">
-            Token: <code>{token[:20]}...{token[-10:]}</code>
-        </p>
+        <div style="margin-top: 30px; text-align: left;">
+            <label style="font-size: 12px; color: #666;">Token:</label>
+            <textarea id="token" readonly style="width: 100%; height: 80px; font-size: 11px; font-family: monospace; margin-top: 5px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; resize: none;">{token}</textarea>
+            <button onclick="document.getElementById('token').select(); document.execCommand('copy');" style="margin-top: 8px; padding: 8px 16px; background: #2e7d32; color: white; border: none; border-radius: 5px; cursor: pointer;">Copy Token</button>
+        </div>
     </div>
 </body>
 </html>"""
