@@ -13,6 +13,9 @@ COPY server/ server/
 COPY client/ client/
 COPY scripts/ scripts/
 
+# Install CPU-only PyTorch first (avoids ~3.5GB CUDA packages)
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
 # Install Python dependencies
 RUN pip install --no-cache-dir ".[server]"
 
