@@ -38,7 +38,7 @@ class InputFilter:
         re.compile(r"ת\.?ז\.?"),
         re.compile(r"כתובת\s+של"),
         re.compile(r"טלפון\s+של"),
-        re.compile(r"איפה\s+גר|גרה"),
+        re.compile(r"איפה\s+(?:גר|גרה)\b"),
         re.compile(r"מידע\s+על\s+[\u05d0-\u05ea]+\s+[\u05d0-\u05ea]+"),
         # IDF ranks followed by a name
         re.compile(
