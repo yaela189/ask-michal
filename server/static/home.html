@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ask Michal - עוזרת שלישות חכמה</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(160deg, #0a1628 0%, #1a3a2a 40%, #2d5a3f 70%, #1a3a2a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        /* Floating particles */
+        .particles { position: fixed; inset: 0; pointer-events: none; }
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: rgba(102, 187, 106, 0.3);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+        .container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            padding: 50px 40px 40px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Michal Tamagotchi */
+        .michal-container {
+            width: 120px; height: 120px;
+            margin: 0 auto 28px;
+            position: relative;
+        }
+        .michal-body {
+            width: 120px; height: 120px;
+            background: linear-gradient(135deg, #43a047, #66bb6a);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 8px 30px rgba(67, 160, 71, 0.4);
+            animation: breathe 3s ease-in-out infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+        /* Face */
+        .eyes { position: absolute; top: 38px; left: 50%; transform: translateX(-50%); display: flex; gap: 24px; }
+        .eye {
+            width: 16px; height: 16px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+        }
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 8px; height: 8px;
+            background: #1a3a2a;
+            border-radius: 50%;
+            top: 4px; left: 4px;
+            animation: look 4s ease-in-out infinite;
+        }
+        @keyframes look {
+            0%, 40%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(2px, -1px); }
+            60% { transform: translate(-2px, 1px); }
+        }
+        .eye-blink { animation: blink 3.5s ease-in-out infinite; }
+        @keyframes blink {
+            0%, 42%, 46%, 100% { transform: scaleY(1); }
+            44% { transform: scaleY(0.1); }
+        }
+        .mouth {
+            position: absolute;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px; height: 14px;
+            border-bottom: 3px solid white;
+            border-radius: 0 0 14px 14px;
+            animation: smile 3s ease-in-out infinite;
+        }
+        @keyframes smile {
+            0%, 100% { width: 28px; }
+            50% { width: 32px; }
+        }
+        /* Blush */
+        .blush {
+            position: absolute;
+            width: 18px; height: 10px;
+            background: rgba(255, 138, 128, 0.4);
+            border-radius: 50%;
+            top: 58px;
+        }
+        .blush-l { left: 16px; }
+        .blush-r { right: 16px; }
+        /* Stars around */
+        .star {
+            position: absolute;
+            font-size: 14px;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        .star:nth-child(1) { top: -8px; right: -5px; animation-delay: 0s; }
+        .star:nth-child(2) { top: 10px; left: -12px; animation-delay: 0.7s; font-size: 10px; }
+        .star:nth-child(3) { bottom: 5px; right: -10px; animation-delay: 1.4s; font-size: 12px; }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        h1 {
+            font-size: 26px;
+            color: #1a3a2a;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 28px;
+            font-weight: 300;
+        }
+        .desc {
+            background: linear-gradient(135deg, #f5f9f6, #e8f5e9);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 28px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #444;
+            text-align: right;
+            border: 1px solid rgba(46, 125, 50, 0.1);
+        }
+        .login-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: white;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        }
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(46, 125, 50, 0.5);
+        }
+        .login-btn:active { transform: translateY(-1px); }
+        .footer {
+            margin-top: 24px;
+            font-size: 11px;
+            color: #bbb;
+        }
+        @media (max-width: 480px) {
+            .container { padding: 40px 28px 32px; }
+            h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="container">
+        <div class="michal-container">
+            <span class="star">&#10024;</span>
+            <span class="star">&#10024;</span>
+            <span class="star">&#10024;</span>
+            <div class="michal-body">
+                <div class="eyes">
+                    <div class="eye eye-blink"></div>
+                    <div class="eye eye-blink"></div>
+                </div>
+                <div class="blush blush-l"></div>
+                <div class="blush blush-r"></div>
+                <div class="mouth"></div>
+            </div>
+        </div>
+        <h1>Ask Michal</h1>
+        <p class="subtitle">עוזרת שלישות חכמה מבוססת בינה מלאכותית</p>
+        <div class="desc">
+            שלום! אני מיכל, קצינת שלישות וירטואלית.
+            אני כאן כדי לעזור לך עם שאלות בנושאי כוח אדם, זכויות, חובות ונהלי שלישות.
+        </div>
+        <a href="/auth/login" class="login-btn">&#127760; התחברות עם Google</a>
+        <p class="footer">Ask Michal v0.1.0</p>
+    </div>
+    <script>
+        // Create floating particles
+        const p = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const d = document.createElement('div');
+            d.className = 'particle';
+            d.style.left = Math.random() * 100 + '%';
+            d.style.width = d.style.height = (2 + Math.random() * 4) + 'px';
+            d.style.animationDuration = (8 + Math.random() * 12) + 's';
+            d.style.animationDelay = (Math.random() * 10) + 's';
+            p.appendChild(d);
+        }
+        // Auto-redirect if already logged in
+        if (localStorage.getItem('michal_token')) window.location.href = '/chat';
+    </script>
+</body>
+</html>
