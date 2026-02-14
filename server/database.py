@@ -46,10 +46,32 @@ def _migrate_rating_columns():
                 logger.info(f"Migrated: added column query_logs.{col_name}")
 
 
+def _promote_initial_admin():
+    """Ensure at least one admin exists (first user becomes admin)."""
+    from server.models import User
+    session = SessionLocal()
+    try:
+        admin_exists = session.query(User).filter(User.is_admin == True).first()
+        if not admin_exists:
+            first_user = session.query(User).order_by(User.id).first()
+            if first_user:
+                first_user.is_admin = True
+                session.commit()
+                logger.info(f"Promoted {first_user.email} to admin (first user)")
+    except Exception:
+        session.rollback()
+    finally:
+        session.close()
+
+
 def init_db():
     """Create all tables."""
     Base.metadata.create_all(bind=engine)
     try:
         _migrate_rating_columns()
+    except Exception:
+        pass
+    try:
+        _promote_initial_admin()
     except Exception:
         pass
