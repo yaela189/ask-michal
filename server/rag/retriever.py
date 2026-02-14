@@ -67,7 +67,5 @@ class KnowledgeRetriever:
         """Format retrieved chunks for injection into Claude's context."""
         parts = []
         for i, r in enumerate(results, 1):
-            parts.append(
-                f"[מקור {i}: {r['source']}, עמוד {r['page']}]\n{r['text']}"
-            )
+            parts.append(f"[קטע {i}]\n{r['text']}")
         return "\n\n---\n\n".join(parts)
