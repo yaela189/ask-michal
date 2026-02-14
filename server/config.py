@@ -21,8 +21,8 @@ class Settings(BaseSettings):
     # RAG
     embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     faiss_index_path: str = "./data/faiss_index"
-    chunk_size: int = 500
-    chunk_overlap: int = 50
+    chunk_size: int = 200
+    chunk_overlap: int = 30
     retrieval_top_k: int = 5
 
     # Quota

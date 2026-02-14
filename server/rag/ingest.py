@@ -41,6 +41,34 @@ class PDFIngestor:
         with open(f"{index_path}.meta.json", "w", encoding="utf-8") as f:
             json.dump(self.metadata, f, ensure_ascii=False, indent=2)
 
+    @staticmethod
+    def _strip_headers(text: str) -> str:
+        """Remove repeating PDF headers/footers that pollute embeddings."""
+        lines = text.split("\n")
+        cleaned = []
+        for line in lines:
+            stripped = line.strip()
+            # Skip common IDF document header patterns
+            if re.match(r"^הוראת קבע אכ\"?א", stripped):
+                continue
+            if re.match(r"^-?\s*\d+\s*-?\s*$", stripped):
+                continue
+            if re.match(r"^מטכ\"?ל אכ\"?א", stripped):
+                continue
+            if stripped in ("", "-בלמ\"ס-"):
+                continue
+            # Skip lines that are just unit/branch headers repeated on every page
+            if re.match(r"^חט' תכנון", stripped):
+                continue
+            if re.match(r"^תכנון כ\"א", stripped):
+                continue
+            if re.match(r"^ענף ושמ\"פ", stripped):
+                continue
+            if re.match(r"^מדור תע\"ם", stripped):
+                continue
+            cleaned.append(line)
+        return "\n".join(cleaned).strip()
+
     def extract_text_from_pdf(self, pdf_path: str) -> list[dict]:
         """Extract text from PDF with page metadata."""
         doc = fitz.open(pdf_path)
@@ -48,7 +76,7 @@ class PDFIngestor:
         for page_num, page in enumerate(doc, 1):
             text = page.get_text("text")
             text = re.sub(r"\n{3,}", "\n\n", text)
-            text = text.strip()
+            text = self._strip_headers(text)
             if text:
                 pages.append(
                     {

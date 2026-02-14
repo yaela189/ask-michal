@@ -90,6 +90,7 @@ async def upload_pdf(
 @router.post("/ingest")
 async def ingest_knowledge_base(
     request: Request,
+    clear: bool = Query(False),
     admin: User = Depends(require_admin),
 ):
     from server.rag.ingest import PDFIngestor
@@ -102,8 +103,12 @@ async def ingest_knowledge_base(
     if not pdfs:
         raise HTTPException(status_code=404, detail="No PDF files found in knowledge_base/")
 
-    logger.info(f"Ingesting {len(pdfs)} PDFs...")
+    logger.info(f"Ingesting {len(pdfs)} PDFs (clear={clear})...")
     ingestor = PDFIngestor(settings)
+
+    if clear:
+        ingestor.clear()
+
     results = ingestor.ingest_directory(kb_dir)
 
     # Reload the engine's retriever with the new index
@@ -111,7 +116,7 @@ async def ingest_knowledge_base(
 
     total = sum(results.values())
     return {
-        "message": f"Ingested {total} new chunks from {len(results)} files",
+        "message": f"Ingested {total} chunks from {len(results)} files",
         "files": results,
         "total_chunks": len(ingestor.metadata["chunks"]),
     }
