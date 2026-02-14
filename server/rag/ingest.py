@@ -44,27 +44,28 @@ class PDFIngestor:
     @staticmethod
     def _strip_headers(text: str) -> str:
         """Remove repeating PDF headers/footers that pollute embeddings."""
+        # First pass: remove known multi-word header patterns that may appear on one line
+        text = re.sub(
+            r"-?\s*בלמ\"?ס\s*-?", "", text
+        )
+        text = re.sub(
+            r"מטכ\"?ל\s+אכ\"?א\d*\s+חט'\s+תכנון\s+ומנהל\s+כ\"א\s+תכנון\s+כ\"א\s+מילואים\s+ענף\s+ושמ\"פ\s+מדור\s+תע\"ם",
+            "", text
+        )
+        text = re.sub(r"הוראת קבע אכ\"?א[\d\-]+", "", text)
+
+        # Second pass: line-by-line cleanup
         lines = text.split("\n")
         cleaned = []
         for line in lines:
             stripped = line.strip()
-            # Skip common IDF document header patterns
-            if re.match(r"^הוראת קבע אכ\"?א", stripped):
+            if not stripped:
                 continue
+            # Skip standalone page numbers
             if re.match(r"^-?\s*\d+\s*-?\s*$", stripped):
                 continue
-            if re.match(r"^מטכ\"?ל אכ\"?א", stripped):
-                continue
-            if stripped in ("", "-בלמ\"ס-"):
-                continue
-            # Skip lines that are just unit/branch headers repeated on every page
-            if re.match(r"^חט' תכנון", stripped):
-                continue
-            if re.match(r"^תכנון כ\"א", stripped):
-                continue
-            if re.match(r"^ענף ושמ\"פ", stripped):
-                continue
-            if re.match(r"^מדור תע\"ם", stripped):
+            # Skip standalone unit/branch header fragments
+            if stripped in ("מדור תע\"ם", "ענף ושמ\"פ", "תכנון כ\"א", "חט' תכנון"):
                 continue
             cleaned.append(line)
         return "\n".join(cleaned).strip()
