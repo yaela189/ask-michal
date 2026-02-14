@@ -150,3 +150,49 @@ async def list_ratings(
         ))
 
     return RatingsListResponse(ratings=items, total=total)
+
+
+@router.get("/debug/knowledge-base")
+async def debug_knowledge_base(
+    request: Request,
+    sample: int = Query(3, ge=1, le=20),
+    admin: User = Depends(require_admin),
+):
+    engine = request.app.state.engine
+    retriever = engine.retriever
+    chunks = retriever.metadata.get("chunks", [])
+    sources = list({c["source"] for c in chunks})
+    pages = sorted({c["page"] for c in chunks})
+    samples = [
+        {"page": c["page"], "source": c["source"], "text_preview": c["text"][:300]}
+        for c in chunks[:sample]
+    ]
+    return {
+        "total_chunks": len(chunks),
+        "sources": sources,
+        "pages_covered": pages,
+        "index_vectors": retriever.index.ntotal if retriever.index else 0,
+        "sample_chunks": samples,
+    }
+
+
+@router.get("/debug/test-retrieval")
+async def debug_test_retrieval(
+    request: Request,
+    q: str = Query(..., min_length=2),
+    admin: User = Depends(require_admin),
+):
+    engine = request.app.state.engine
+    retrieved = engine.retriever.retrieve(q)
+    return {
+        "query": q,
+        "results": [
+            {
+                "score": r["score"],
+                "source": r["source"],
+                "page": r["page"],
+                "text_preview": r["text"][:300],
+            }
+            for r in retrieved
+        ],
+    }
