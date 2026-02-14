@@ -29,7 +29,9 @@ jobs:
           tags: ghcr.io/${{ github.repository_owner }}/ask-michal:latest
 
       - name: Trigger Render deploy
-        if: env.RENDER_DEPLOY_HOOK != ''
         env:
-          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
-        run: curl -s "$RENDER_DEPLOY_HOOK"
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            "https://api.render.com/v1/services/srv-d67prejh46gs73f053tg/deploys"
