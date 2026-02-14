@@ -40,6 +40,19 @@ class MichalClient:
         response.raise_for_status()
         return response.json()
 
+    def rate(self, query_id: int, rating: int, comment: str | None = None) -> dict:
+        payload = {"query_id": query_id, "rating": rating}
+        if comment:
+            payload["comment"] = comment
+        response = httpx.post(
+            f"{self.server_url}/api/rate",
+            json=payload,
+            headers=self._headers(),
+            timeout=10.0,
+        )
+        response.raise_for_status()
+        return response.json()
+
     def reload_quota(self, user_id: int, amount: int) -> dict:
         response = httpx.post(
             f"{self.server_url}/admin/users/{user_id}/reload",

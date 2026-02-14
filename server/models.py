@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, func
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey, func
 from sqlalchemy.orm import relationship
 
 from server.database import Base
@@ -27,5 +27,9 @@ class QueryLog(Base):
     question_hash = Column(String, nullable=False)
     tokens_used = Column(Integer, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
+
+    rating = Column(Integer, nullable=True)
+    rating_comment = Column(Text, nullable=True)
+    rated_at = Column(DateTime, nullable=True)
 
     user = relationship("User", back_populates="query_logs")

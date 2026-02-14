@@ -13,6 +13,9 @@ from client.ui import (
     display_error,
     get_question,
     display_thinking,
+    prompt_rating,
+    prompt_rating_comment,
+    display_rating_thanks,
 )
 
 DEFAULT_SERVER = "http://localhost:8000"
@@ -91,6 +94,17 @@ def chat(ctx):
                 result["sources"],
                 result["queries_remaining"],
             )
+
+            query_id = result.get("query_id")
+            if query_id:
+                rating = prompt_rating()
+                if rating is not None:
+                    comment = prompt_rating_comment()
+                    try:
+                        rate_result = client.rate(query_id, rating, comment)
+                        display_rating_thanks(rate_result["queries_remaining"])
+                    except Exception:
+                        console.print(f"[dim]{bidi('שגיאה בשליחת הדירוג.')}[/dim]\n")
 
         except KeyboardInterrupt:
             console.print(f"\n[cyan]{bidi('להתראות!')}[/cyan]")

@@ -232,6 +232,67 @@
         .messages::-webkit-scrollbar-track { background: transparent; }
         .messages::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
+        /* === RATING WIDGET === */
+        .rating-widget {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #f0f0f0;
+        }
+        .rating-label {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .stars {
+            display: inline-flex;
+            direction: ltr;
+            gap: 2px;
+        }
+        .stars .star {
+            cursor: pointer;
+            font-size: 22px;
+            color: #ddd;
+            transition: color 0.15s, transform 0.15s;
+            user-select: none;
+        }
+        .stars .star:hover,
+        .stars .star.hover { color: #f0c040; transform: scale(1.15); }
+        .stars .star.active { color: #f0c040; }
+        .rating-comment-area {
+            margin-top: 8px;
+            display: none;
+        }
+        .rating-comment-area textarea {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #e4e4dc;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: inherit;
+            direction: rtl;
+            resize: none;
+            outline: none;
+            rows: 2;
+        }
+        .rating-comment-area textarea:focus { border-color: var(--olive-light); }
+        .rating-submit-btn {
+            margin-top: 6px;
+            padding: 4px 14px;
+            background: var(--olive-mid);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .rating-submit-btn:hover { background: var(--olive-light); }
+        .rating-thanks {
+            font-size: 12px;
+            color: var(--olive-mid);
+            margin-top: 4px;
+        }
+
         @media (max-width: 600px) {
             .msg { max-width: 88%; }
             .quota-badge { display: none; }
@@ -380,7 +441,7 @@
             }
         }
 
-        function addMessage(text, type, sources) {
+        function addMessage(text, type, sources, queryId) {
             const div = document.createElement('div');
             div.className = 'msg ' + type;
             div.textContent = text;
@@ -390,10 +451,95 @@
                 srcDiv.textContent = sources.join(' | ');
                 div.appendChild(srcDiv);
             }
+            if (type === 'bot' && queryId) {
+                div.appendChild(createRatingWidget(queryId));
+            }
             messagesDiv.appendChild(div);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
             messageCount++;
             if (messageCount >= 2) michalArea.classList.add('compact');
+        }
+
+        function createRatingWidget(queryId) {
+            const widget = document.createElement('div');
+            widget.className = 'rating-widget';
+
+            const label = document.createElement('div');
+            label.className = 'rating-label';
+            label.textContent = 'דרג/י את התשובה:';
+            widget.appendChild(label);
+
+            const starsDiv = document.createElement('div');
+            starsDiv.className = 'stars';
+            let selectedRating = 0;
+
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('span');
+                star.className = 'star';
+                star.textContent = '\u2605';
+                star.dataset.value = i;
+                star.addEventListener('mouseenter', () => {
+                    starsDiv.querySelectorAll('.star').forEach(s => {
+                        s.classList.toggle('hover', parseInt(s.dataset.value) <= i);
+                    });
+                });
+                star.addEventListener('mouseleave', () => {
+                    starsDiv.querySelectorAll('.star').forEach(s => s.classList.remove('hover'));
+                });
+                star.addEventListener('click', () => {
+                    selectedRating = i;
+                    starsDiv.querySelectorAll('.star').forEach(s => {
+                        s.classList.toggle('active', parseInt(s.dataset.value) <= i);
+                    });
+                    commentArea.style.display = 'block';
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                });
+                starsDiv.appendChild(star);
+            }
+            widget.appendChild(starsDiv);
+
+            const commentArea = document.createElement('div');
+            commentArea.className = 'rating-comment-area';
+            const textarea = document.createElement('textarea');
+            textarea.rows = 2;
+            textarea.placeholder = 'הערה (אופציונלי)...';
+            commentArea.appendChild(textarea);
+
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'rating-submit-btn';
+            submitBtn.textContent = 'שלח דירוג';
+            submitBtn.addEventListener('click', async () => {
+                if (!selectedRating) return;
+                submitBtn.disabled = true;
+                try {
+                    const res = await fetch('/api/rate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                        body: JSON.stringify({ query_id: queryId, rating: selectedRating, comment: textarea.value.trim() || null })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        widget.innerHTML = '';
+                        const thanks = document.createElement('div');
+                        thanks.className = 'rating-thanks';
+                        thanks.textContent = '\u2605'.repeat(selectedRating) + ' \u2014 ' + data.message;
+                        widget.appendChild(thanks);
+                        document.getElementById('quota').textContent = data.queries_remaining + ' \u05E9\u05D0\u05DC\u05D5\u05EA';
+                    } else {
+                        const err = document.createElement('div');
+                        err.className = 'rating-thanks';
+                        err.style.color = '#c96b5a';
+                        err.textContent = data.detail || '\u05E9\u05D2\u05D9\u05D0\u05D4';
+                        widget.innerHTML = '';
+                        widget.appendChild(err);
+                    }
+                } catch {
+                    submitBtn.disabled = false;
+                }
+            });
+            commentArea.appendChild(submitBtn);
+            widget.appendChild(commentArea);
+            return widget;
         }
 
         async function send() {
@@ -420,7 +566,7 @@
                 const data = await res.json();
                 if (res.ok) {
                     setMood('happy', 'שמחה לעזור!');
-                    addMessage(data.answer, 'bot', data.sources);
+                    addMessage(data.answer, 'bot', data.sources, data.query_id);
                     document.getElementById('quota').textContent = data.queries_remaining + ' שאלות';
                     setTimeout(() => setMood('', 'מוכנה לעזור!'), 3000);
                 } else {

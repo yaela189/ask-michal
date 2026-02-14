@@ -75,3 +75,33 @@ def display_thinking():
         Panel(bidi("מיכל חושבת..."), border_style="yellow"),
         refresh_per_second=4,
     )
+
+
+def prompt_rating() -> int | None:
+    value = Prompt.ask(
+        f"[dim]{bidi('דרג/י את התשובה (1-5, Enter לדילוג)')}[/dim]",
+        default="",
+    )
+    if not value.strip():
+        return None
+    try:
+        rating = int(value)
+        if 1 <= rating <= 5:
+            return rating
+    except ValueError:
+        pass
+    console.print(f"[dim]{bidi('דירוג לא תקין, מדלג.')}[/dim]")
+    return None
+
+
+def prompt_rating_comment() -> str | None:
+    value = Prompt.ask(
+        f"[dim]{bidi('הערה (Enter לדילוג)')}[/dim]",
+        default="",
+    )
+    return value.strip() or None
+
+
+def display_rating_thanks(queries_remaining: int):
+    console.print(f"[green]{bidi('תודה על הדירוג!')}[/green]")
+    console.print(f"[dim]{bidi(f'שאלות נותרות: {queries_remaining}')}[/dim]\n")

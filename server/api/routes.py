@@ -2,6 +2,7 @@
 import hashlib
 import logging
 import os
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
 from sqlalchemy.orm import Session
@@ -9,7 +10,7 @@ from sqlalchemy.orm import Session
 from server.auth.jwt import get_current_user
 from server.database import get_db
 from server.models import User, QueryLog
-from server.api.schemas import AskRequest, AskResponse, QuotaResponse
+from server.api.schemas import AskRequest, AskResponse, QuotaResponse, RateRequest, RateResponse
 
 logger = logging.getLogger("ask-michal")
 router = APIRouter(prefix="/api", tags=["api"])
@@ -44,11 +45,13 @@ async def ask_question(
         )
         db.add(log)
         db.commit()
+        db.refresh(log)
 
         return AskResponse(
             answer=result["answer"],
             sources=result["sources"],
             queries_remaining=user.queries_remaining,
+            query_id=log.id,
         )
     except Exception:
         # Restore quota on failure
@@ -105,4 +108,33 @@ async def get_quota(
         queries_remaining=user.queries_remaining,
         queries_used=queries_used,
         total_quota=queries_used + user.queries_remaining,
+    )
+
+
+@router.post("/rate", response_model=RateResponse)
+async def rate_answer(
+    body: RateRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    log = db.query(QueryLog).filter(QueryLog.id == body.query_id).first()
+    if not log:
+        raise HTTPException(status_code=404, detail="שאילתה לא נמצאה")
+
+    if log.user_id != user.id:
+        raise HTTPException(status_code=403, detail="אין הרשאה לדרג שאילתה זו")
+
+    if log.rating is not None:
+        raise HTTPException(status_code=409, detail="שאילתה זו כבר דורגה")
+
+    log.rating = body.rating
+    log.rating_comment = body.comment
+    log.rated_at = datetime.now(timezone.utc)
+
+    user.queries_remaining += 1
+    db.commit()
+
+    return RateResponse(
+        message="תודה על הדירוג!",
+        queries_remaining=user.queries_remaining,
     )

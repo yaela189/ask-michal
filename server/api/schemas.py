@@ -12,6 +12,7 @@ class AskResponse(BaseModel):
     answer: str
     sources: list[str]
     queries_remaining: int
+    query_id: int
 
 
 class QuotaResponse(BaseModel):
@@ -30,6 +31,34 @@ class UserResponse(BaseModel):
     last_login: datetime | None
 
     model_config = {"from_attributes": True}
+
+
+class RateRequest(BaseModel):
+    query_id: int
+    rating: int = Field(..., ge=1, le=5)
+    comment: str | None = None
+
+
+class RateResponse(BaseModel):
+    message: str
+    queries_remaining: int
+
+
+class RatingItem(BaseModel):
+    query_id: int
+    user_email: str
+    user_name: str
+    rating: int
+    comment: str | None
+    rated_at: datetime | None
+    created_at: datetime | None
+
+    model_config = {"from_attributes": True}
+
+
+class RatingsListResponse(BaseModel):
+    ratings: list[RatingItem]
+    total: int
 
 
 class ReloadQuotaRequest(BaseModel):

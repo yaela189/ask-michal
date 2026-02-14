@@ -2,13 +2,13 @@
 import os
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, UploadFile, File
 from sqlalchemy.orm import Session
 
 from server.auth.jwt import require_admin
 from server.database import get_db
-from server.models import User
-from server.api.schemas import UserResponse, ReloadQuotaRequest
+from server.models import User, QueryLog
+from server.api.schemas import UserResponse, ReloadQuotaRequest, RatingsListResponse, RatingItem
 
 logger = logging.getLogger("ask-michal")
 
@@ -115,3 +115,38 @@ async def ingest_knowledge_base(
         "files": results,
         "total_chunks": len(ingestor.metadata["chunks"]),
     }
+
+
+@router.get("/ratings", response_model=RatingsListResponse)
+async def list_ratings(
+    min_rating: int | None = Query(None, ge=1, le=5),
+    max_rating: int | None = Query(None, ge=1, le=5),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
+    admin: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    query = db.query(QueryLog).filter(QueryLog.rating.isnot(None))
+
+    if min_rating is not None:
+        query = query.filter(QueryLog.rating >= min_rating)
+    if max_rating is not None:
+        query = query.filter(QueryLog.rating <= max_rating)
+
+    total = query.count()
+    logs = query.order_by(QueryLog.rated_at.desc()).offset(skip).limit(limit).all()
+
+    items = []
+    for log in logs:
+        user = db.query(User).filter(User.id == log.user_id).first()
+        items.append(RatingItem(
+            query_id=log.id,
+            user_email=user.email if user else "",
+            user_name=user.name if user else "",
+            rating=log.rating,
+            comment=log.rating_comment,
+            rated_at=log.rated_at,
+            created_at=log.created_at,
+        ))
+
+    return RatingsListResponse(ratings=items, total=total)
