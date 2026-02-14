@@ -76,7 +76,7 @@ async def upload_pdf(
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 
-    kb_dir = "./knowledge_base"
+    kb_dir = "./data/knowledge_base"
     os.makedirs(kb_dir, exist_ok=True)
     path = os.path.join(kb_dir, file.filename)
 
@@ -97,7 +97,7 @@ async def ingest_knowledge_base(
     from server.config import Settings
 
     settings = Settings()
-    kb_dir = "./knowledge_base"
+    kb_dir = "./data/knowledge_base"
 
     pdfs = [f for f in os.listdir(kb_dir) if f.lower().endswith(".pdf")] if os.path.isdir(kb_dir) else []
     if not pdfs:

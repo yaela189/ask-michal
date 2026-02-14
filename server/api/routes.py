@@ -69,7 +69,7 @@ async def upload_pdf(
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="ניתן להעלות קבצי PDF בלבד")
 
-    kb_dir = "./knowledge_base"
+    kb_dir = "./data/knowledge_base"
     os.makedirs(kb_dir, exist_ok=True)
     path = os.path.join(kb_dir, file.filename)
 
